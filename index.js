@@ -1,13 +1,27 @@
-
+/**
+ * Generates the ymn for each event in form of [Boolean, Boolean, Number].
+ * ymn[0] indicates whether the year should be used.
+ * ymn[1] indicates whether the month should be used.
+ * ymn[2] contains the number or zero if it should not be used.
+ *
+ * @param events the list of events with 'name' and 'date'
+ * @returns the list of events with 'ymn' added
+ */
 function generateYmn(events) {
   var ymnTrees = buildYmnTrees(events);
 
   for (var name in ymnTrees) {
-    traverseYmnTree(ymnTrees[name]);
+    traverseYmnTree(ymnTrees[name], [], addYmn);
   }
   return events;
 }
 
+/**
+ * Builds an ymn-tree for each event name.
+ *
+ * @param events the list of events with 'name' and 'date'
+ * @returns the ymn trees by event name
+ */
 function buildYmnTrees(events) {
   var ymnTrees = {};
 
@@ -35,11 +49,20 @@ function buildYmnTrees(events) {
   return ymnTrees;
 }
 
-function traverseYmnTree(subtree, parentNodeInfos) {
+/**
+ * Recursive function that traverses an ymn-tree and calls
+ * the given callback for each event with information about
+ * it's parent nodes.
+ *
+ * @param subtree the current subtree
+ * @param parentNodeInfos the current information about the parent nodes
+ * @param callback the callback to call on an event
+ */
+function traverseYmnTree(subtree, parentNodeInfos, callback) {
   parentNodeInfos = parentNodeInfos || [];
   if ('name' in subtree) {
     var event = subtree;
-    addYmn(event, parentNodeInfos)
+    callback(event, parentNodeInfos);
   } else {
     var siblings = Object.keys(subtree).length;
     var index = 0;
@@ -47,11 +70,18 @@ function traverseYmnTree(subtree, parentNodeInfos) {
       traverseYmnTree(subtree[key], parentNodeInfos.concat({
         index: index++,
         siblings: siblings
-      }));
+      }), callback);
     }
   }
 }
 
+/**
+ * Determines the ymn form the parent node information
+ * and adds it to the event.
+ *
+ * @param event the event
+ * @param parentNodeInfos the parent node information
+ */
 function addYmn(event, parentNodeInfos) {
   event.ymn = [
     !!(parentNodeInfos[2].siblings > 1 || parentNodeInfos[1].siblings > 1 || parentNodeInfos[0].siblings > 1),
