@@ -1,8 +1,8 @@
 {
-  "name": "unique-event-names",
-  "version": "0.0.0",
+  "name": "event-ymn",
+  "version": "0.1.0",
   "private": true,
-  "description": "Creates unique event names",
+  "description": "Helps to create unique event names by adding the year, the month or a number.",
   "author": "Georg Schmidl <georg.schmidl@gmail.com>",
   "license": "MIT",
   "main": "index.js",
